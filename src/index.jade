@@ -1,0 +1,82 @@
+doctype html
+html
+    head
+        meta(charset="utf-8")
+        title Cascade Test
+        meta(name="apple-mobile-web-app-capable" content="yes")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no")
+        meta(name="apple-mobile-web-app-status-bar-style" content="black")
+        link(rel='stylesheet', href='/flat-ui/dist/css/vendor/bootstrap.min.css')
+        link(rel='stylesheet', href='/flat-ui/dist/css/flat-ui.min.css')
+        link(rel='stylesheet', href='/styles/style.css')
+        //HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file.
+        //[if lt IE 9]
+        script(src="/flat-ui/dist/js/vendor/html5shiv.js")
+        script(src="/flat-ui/dist/js/vendor/respond.min.js")
+        //[endif]
+                           
+    body(ng-app="flatuiApp")
+        div.container(ng-controller="FlatUICtrl")
+            div.row
+                
+                div.col-md-1.col-xs-4
+                    span.btn.btn-lg.btn-primary(ng-click='dec()') Prev
+                div.col-md-2.col-xs-6
+                    input(ng-model='idx' type='number' ng-change='update()')
+                div.col-md-1.col-xs-4
+                    span.btn.btn-lg.btn-primary(ng-click='inc()') Next
+                div.col-md-1
+                div.col-md-3.col-xs-6
+                    input(ng-model='min_neighbors' type='number')
+                    |  Neighbors
+                div.col-md-1
+                    span.btn.btn-lg(ng-click='hide()' ng-class='hide_abstract ? "btn-warning" : "btn-primary"') {{hide_abstract ? 'real' : 'all'}}
+
+            br.hidden-xs
+            div.row
+                div.col-md-1.hidden-xs
+                div.col-md-1.hidden-xs(ng-repeat='cascade in cascades')
+                    span.btn.btn-block(ng-class='opencv(cascade)' ng-mouseenter='enter(cascade)' ng-mouseleave='leave()') {{cascade.name}}
+            div.row
+                div.col-md-1
+                    #[span.fui-check]
+                div.col-md-1.hidden-xs(ng-repeat='cascade in cascades')
+                     {{total_images*rate_tpr(cascade)}}
+            div.row
+                div.col-md-1
+                    #[span.fui-cross]
+                div.col-md-1.hidden-xs(ng-repeat='cascade in cascades')
+                    {{total_images*rate_fpr(cascade)}}
+            div.row
+                div.col-md-1
+                    #[span.fui-plus]
+                div.col-md-1.hidden-xs(ng-repeat='cascade in cascades')
+                    {{(rate_tpr(cascade)/rate_fpr(cascade)).toString().slice(0,5)}}
+
+            br.hidden-xs
+            div.row(ng-if=ready ng-repeat='row in sliced')
+                div(ng-class='grid(columns)' ng-repeat='img in row')
+                    img.img-responsive(style='width: 100% !important' ng-src='cmu/{{img.name}}')
+                    // canvas.abs(cmu ng-repeat='face in img.ground' box='face' color='"#ff00ff"' timeout='500')
+                    canvas.abs(ng-if='show' cmu ng-repeat='face in load(img.name)' box='face' color='"#3498db"' timeout='0')
+                    div.abs(style='opacity: 0.7; background-color: #ffffff !important; width: 100% !important') 
+                        p(ng-if='!show' style='margin: 0px 10px 0px')
+                            // #[span.fui-image(ng-style="{'color' : abstract(img) ? 'red' : 'blue'}")] {{img.name}}
+                            #[span.fui-image] {{img.name}}
+                        p(ng-if='show' style='margin: 0px 10px 0px')
+                            #[span.fui-image] {{img.name}} #[&nbsp]#[&nbsp]#[&nbsp]#[&nbsp] #[span.fui-check]  {{rate_tp(img.name)}}/{{img.ground.length}} #[&nbsp] #[span.fui-cross] {{rate_fp(img.name)}}
+
+        script(src="/angular/angular.min.js")
+        script(src="/scripts/app.js")
+        script(src="/scripts/controllers/flatui.ctrl.js")
+        script(src="/scripts/directives/cmu.js")
+        script(src="/fui-angular/fui.js")
+        script(src="/fui-angular/fui-radio.js")
+        script(src="/fui-angular/fui-checkbox.js")
+        script(src="/fui-angular/fui-switch.js")
+        script(src="/flat-ui/dist/js/vendor/jquery.min.js")
+        script(src="/flat-ui/dist/js/vendor/jquery.min.js")
+        script(src="/flat-ui/dist/js/flat-ui.min.js")
+        script(src="/lorem/src/library/lorem.js")
+        script (function($) { $('.container').ipsum();}(jQuery));
+        // script videojs.options.flash.swf = "/flat-ui/dist/js/vendors/video.-js.swf"
